@@ -1,0 +1,46 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: pavithra-ns 
+--- 
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: eycart-app
+  namespace: pavithra-ns
+spec:
+  replicas: 2
+  selector:
+    matchLabels: 
+      app: eycart
+  template:
+    metadata:
+      labels:
+        app: eycart
+    spec:
+      containers:
+        - name: eycart-cont
+          image: muralisocial123/ey-cart:v1.1.0
+          ports:
+            - containerPort: 3000
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "50m"
+            limits:
+              memory: "256Mi"
+              cpu: "100m" 
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: eycart-service
+  namespace: pavithra-ns
+spec:
+  selector:
+    app: eycart
+  ports:
+    - protocol: TCP
+      port: 3000
+      targetPort: 3000
+  type: ClusterIp
